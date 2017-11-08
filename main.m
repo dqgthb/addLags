@@ -6,15 +6,9 @@ crsp = sortrows(crsp, {'PERMNO', 'datenum'});
 variableList = {'PERMNO', 'marketCap', 'adjustedPrice'};
 
 
-k = 2;
+k = 5;
 
 crsp = addLags(variableList, k, crsp);
-
-% crsp.col = [ NaN(k, 1); crsp.marketCap(1:end-k) ]
-% crsp.col2 = [NaN(k, 1); crsp.adjustedPrice(1:end - k) ]
-% crsp.PERM2 = [ NaN(k, 1); crsp.PERMNO(1:end - k) ]
-% crsp.col (crsp.PERMNO ~= crsp.PERM2) = NaN;
-
 
 function crsp=addLags(variableList,k,crsp)
    w = width(crsp)
@@ -30,9 +24,6 @@ function crsp=addLags(variableList,k,crsp)
 
    crsp{k+1:end, vLOut } = crsp{1:end-k, vLOut};
 
-   temp = (crsp.PERMNO ~= crsp{:, w+1});
-   %crsp(temp, w+1:w+k) = NaN;
-   crsp{temp, w+1:w+l} = NaN
-   %(crsp.PERMNO ~= crsp(:,w+1)) = NaN;
-   %crsp.PERMNO ~= "crsp.lag3PERMNO"
+   isSameFirm = (crsp.PERMNO ~= crsp{:, w+1});
+   crsp{isSameFirm, w+1:w+l} = NaN
 end
