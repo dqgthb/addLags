@@ -3,7 +3,8 @@ crsp = crsp(1:600, :);
 crsp.datenum = datenum(num2str(crsp.DateOfObservation), 'yyyymmdd');
 crsp = sortrows(crsp, {'PERMNO', 'datenum'});
 
-variableList = {'PERMNO', 'marketCap', 'adjustedPrice'};
+%variableList = {'PERMNO', 'marketCap', 'adjustedPrice'};
+variableList = {'marketCap', 'adjustedPrice'};
 
 
 k = 5;
@@ -18,12 +19,13 @@ function crsp=addLags(variableList,k,crsp)
        'lag'...
        ,num2str(k)...
        ,variableList);
+   lagPermno = [NaN(k, 1); crsp.PERMNO(1:end-k)];
 
 
    crsp{:, vLOut } = crsp{:, variableList};
 
    crsp{k+1:end, vLOut } = crsp{1:end-k, vLOut};
 
-   isSameFirm = (crsp.PERMNO ~= crsp{:, w+1});
-   crsp{isSameFirm, w+1:w+l} = NaN
+   isSameFirm = (crsp.PERMNO ~= lagPermno);
+   crsp{isSameFirm, w+1:w+l} = NaN;
 end
